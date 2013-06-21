@@ -1,9 +1,9 @@
 Folder Renamer for Image Libraries
 ==========
 
-Rename your image folders with the data based on EXIF data and/or the image create date. 
+Rename your image folders based on the EXIF date and/or the file creation dates. 
 
-Useful when migrating to Lightroom's workflow from Picasa.
+Useful when migrating from Picasa to a professional photo workflow (Lightroom, etc).
 
   ![Options](https://raw.github.com/DavidVeksler/ImageLibraryRenamer/master/Screenshots/Options.png)
   
