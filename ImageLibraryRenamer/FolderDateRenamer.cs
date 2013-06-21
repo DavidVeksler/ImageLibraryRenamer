@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ImageLibraryRenamer.ExifExtractor;
@@ -21,6 +22,7 @@ namespace ImageLibraryRenamer
             public RenameFoldersParams(string directory, string searchPattern, string datePattern,
                                        bool useExifDataToGetDate, bool useFileDateIfNoExif, bool Recursive,
                                        bool TestMode, ActivityLogger logger)
+                : this()
             {
                 _directory = directory;
                 _searchPattern = searchPattern;
@@ -30,6 +32,9 @@ namespace ImageLibraryRenamer
                 _recursive = Recursive;
                 _testMode = TestMode;
                 _logger = logger;
+                SkipTopLevel = true;
+                SkipNumeric = false;
+                SkipFolders = null;
             }
 
             public string Directory
@@ -72,9 +77,23 @@ namespace ImageLibraryRenamer
             {
                 get { return _logger; }
             }
+
+            public bool SkipTopLevel { get; set; }
+
+            public bool SkipNumeric { get; set; }
+
+            public string SkipFolders { get; set; }
         }
 
-        public void RenameFolders(RenameFoldersParams options)
+        public Dictionary<string, string> RenameQueue = new Dictionary<string, string>();
+        private RenameFoldersParams options;
+
+        public FolderDateRenamer(RenameFoldersParams options)
+        {
+            this.options = options;
+        }
+
+        public void ParseData()
         {
             if (string.IsNullOrWhiteSpace(options.Directory) || !Directory.Exists(options.Directory))
             {
@@ -97,77 +116,117 @@ namespace ImageLibraryRenamer
 
             options.Logger.Log("Checking " + options.Directory + " ");
 
-
-            var files = directoryInfo.GetFiles(options.SearchPattern, searchOption).ToList();
-
-            DateTime? exifDate = null;
-            DateTime? fileCreateDate = null;
-
-            foreach (var file in files)
+            if (options.SkipTopLevel)
             {
-                options.Logger.LogAppendToLast(".");
-
-                if (options.UseExifDataToGetDate)
-                {
-                    exifDate = ImageViewer.GetTakenTime(file.FullName);
-
-                    if (exifDate != null)
-                    {
-                        options.Logger.Log("Found EXIF date: " + exifDate);
-                        break;
-                    }
-                }
-
-                if (options.UseFileDateIfNoExif)
-                {
-                    DateTime created = file.CreationTime;
-                    DateTime modified = file.LastWriteTime;
-
-                    fileCreateDate = created > modified ? modified : created;
-                }
+                options.SkipTopLevel = false;
+                options.Logger.Log("Skipping top level: " + directoryInfo.Name);
             }
-
-            if (exifDate == null && fileCreateDate == null)
+            else if (options.SkipNumeric && IsNumber(directoryInfo.Name))
             {
-                options.Logger.Log("[SKIPPING] No date found and using file date not checked.");   
-                return;
+                options.Logger.Log("Skipping numeric: " + directoryInfo.Name);
             }
-
-
-            DateTime folderDate = exifDate != null ? exifDate.Value : fileCreateDate.Value;
-
-            string pattern = options.DatePattern.Replace("[folder]", "[]");
-
-
-            string dateString = folderDate.ToString(pattern);
-
-            if (dateString.Contains(directoryInfo.Name))
+            else if (options.SkipFolders.Contains(directoryInfo.Name))
             {
-                options.Logger.Log("[SKIPPING] folder name already contains the same date");
-                return;
-            }
-            
-            string newPath = directoryInfo.FullName.Replace(directoryInfo.Name, dateString).Replace("[]", directoryInfo.Name);
-
-            
-
-            if (!options.TestMode)
-            {
-                options.Logger.Log(string.Format("[RENAME] {0} ==> {1}", directoryInfo.FullName, newPath));
-
-                directoryInfo.MoveTo(newPath);
+                options.Logger.Log("Skipping: " + directoryInfo.Name);
             }
             else
             {
-                options.Logger.Log(string.Format("[PREVIEW] {0} ==> {1}", directoryInfo.FullName, newPath));
+                var files = directoryInfo.GetFiles(options.SearchPattern, searchOption).ToList();
+
+                DateTime? exifDate = null;
+                DateTime? fileCreateDate = null;
+
+                foreach (var file in files)
+                {
+                    options.Logger.LogAppendToLast(".");
+
+                    if (options.UseExifDataToGetDate)
+                    {
+                        exifDate = ImageViewer.GetTakenTime(file.FullName);
+
+                        if (exifDate != null)
+                        {
+                            options.Logger.Log("Found EXIF date: " + exifDate);
+                            break;
+                        }
+                    }
+
+                    if (options.UseFileDateIfNoExif)
+                    {
+                        if (fileCreateDate == null || file.CreationTime < fileCreateDate)
+                        {
+                            fileCreateDate = file.CreationTime;
+                        }
+
+                        if (fileCreateDate == null || file.LastWriteTime < fileCreateDate)
+                        {
+                            fileCreateDate = file.LastWriteTime;
+                        }
+
+
+                    }
+                }
+
+                if (exifDate == null && fileCreateDate == null)
+                {
+                    options.Logger.Log("[SKIPPING] No dates found.");
+                    return;
+                }
+
+
+                DateTime folderDate = exifDate != null ? exifDate.Value : fileCreateDate.Value;
+
+                string pattern = options.DatePattern.Replace("[folder]", "[]");
+
+
+                string dateString = folderDate.ToString(pattern);
+
+                if (dateString.Contains(directoryInfo.Name))
+                {
+                    options.Logger.Log("[SKIPPING] folder name already contains the same date");
+                    return;
+                }
+
+                string newPath = directoryInfo.FullName.Replace(directoryInfo.Name, dateString).Replace("[]", directoryInfo.Name);
+
+
+                options.Logger.Log(string.Format("[RENAME] {0} ==> {1}", directoryInfo.FullName, newPath));
+
+
+                RenameQueue.Add(directoryInfo.FullName, newPath);
+
+
             }
 
             var directories = directoryInfo.GetDirectories().ToList();
 
-            directories.ForEach(d =>
+            if (options.Recursive)
+            {
+                directories.ForEach(d =>
+                    {
+                        options.Directory = d.FullName;
+                        ParseData();
+                    });
+            }
+        }
+
+        public bool IsNumber(String value)
+        {
+            return !value.ToCharArray().Where(x => !Char.IsDigit(x)).Any();
+        }
+
+        public void RenameFolders()
+        {
+            RenameQueue.Reverse().ToList().ForEach(pair =>
                 {
-                    options.Directory = d.FullName;
-                    RenameFolders(options);
+                    try
+                    {
+                        System.IO.Directory.Move(pair.Key, pair.Value);
+                    }
+                    catch (Exception ex)
+                    {
+                        this.options.Logger.FatalLog(ex.ToString());
+                    }
                 });
         }
     }

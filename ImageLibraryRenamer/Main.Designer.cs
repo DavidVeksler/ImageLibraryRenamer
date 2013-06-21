@@ -45,6 +45,10 @@
             this.chkUseFileDateIfNoEXIF = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.lbStatus = new System.Windows.Forms.ListBox();
+            this.chkSkipTopLevel = new System.Windows.Forms.CheckBox();
+            this.chkSkipNumeric = new System.Windows.Forms.CheckBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.txtSkipFolders = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -54,7 +58,7 @@
             // 
             this.btnGo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnGo.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnGo.Location = new System.Drawing.Point(170, 266);
+            this.btnGo.Location = new System.Drawing.Point(188, 305);
             this.btnGo.Name = "btnGo";
             this.btnGo.Size = new System.Drawing.Size(222, 49);
             this.btnGo.TabIndex = 0;
@@ -69,7 +73,7 @@
             // btnPickFolder
             // 
             this.btnPickFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPickFolder.Location = new System.Drawing.Point(337, 19);
+            this.btnPickFolder.Location = new System.Drawing.Point(355, 19);
             this.btnPickFolder.Name = "btnPickFolder";
             this.btnPickFolder.Size = new System.Drawing.Size(55, 22);
             this.btnPickFolder.TabIndex = 1;
@@ -83,7 +87,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPath.Location = new System.Drawing.Point(123, 21);
             this.txtPath.Name = "txtPath";
-            this.txtPath.Size = new System.Drawing.Size(197, 20);
+            this.txtPath.Size = new System.Drawing.Size(215, 20);
             this.txtPath.TabIndex = 2;
             // 
             // label1
@@ -100,7 +104,7 @@
             this.chkUseEXIFDataToGetDate.AutoSize = true;
             this.chkUseEXIFDataToGetDate.Checked = true;
             this.chkUseEXIFDataToGetDate.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkUseEXIFDataToGetDate.Location = new System.Drawing.Point(30, 159);
+            this.chkUseEXIFDataToGetDate.Location = new System.Drawing.Point(30, 203);
             this.chkUseEXIFDataToGetDate.Name = "chkUseEXIFDataToGetDate";
             this.chkUseEXIFDataToGetDate.Size = new System.Drawing.Size(159, 17);
             this.chkUseEXIFDataToGetDate.TabIndex = 4;
@@ -122,7 +126,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDatePattern.Location = new System.Drawing.Point(123, 86);
             this.txtDatePattern.Name = "txtDatePattern";
-            this.txtDatePattern.Size = new System.Drawing.Size(197, 20);
+            this.txtDatePattern.Size = new System.Drawing.Size(215, 20);
             this.txtDatePattern.TabIndex = 5;
             this.txtDatePattern.Text = "yyyy-MM-dd-[folder]";
             // 
@@ -134,11 +138,15 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(419, 349);
+            this.tabControl1.Size = new System.Drawing.Size(437, 388);
             this.tabControl1.TabIndex = 7;
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.label4);
+            this.tabPage1.Controls.Add(this.txtSkipFolders);
+            this.tabPage1.Controls.Add(this.chkSkipNumeric);
+            this.tabPage1.Controls.Add(this.chkSkipTopLevel);
             this.tabPage1.Controls.Add(this.chkPreview);
             this.tabPage1.Controls.Add(this.chkRecusrive);
             this.tabPage1.Controls.Add(this.label3);
@@ -154,7 +162,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(411, 323);
+            this.tabPage1.Size = new System.Drawing.Size(429, 362);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Properties";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -163,11 +171,11 @@
             // 
             this.chkPreview.AutoSize = true;
             this.chkPreview.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkPreview.Location = new System.Drawing.Point(31, 205);
+            this.chkPreview.Location = new System.Drawing.Point(30, 269);
             this.chkPreview.Name = "chkPreview";
-            this.chkPreview.Size = new System.Drawing.Size(305, 17);
+            this.chkPreview.Size = new System.Drawing.Size(212, 17);
             this.chkPreview.TabIndex = 11;
-            this.chkPreview.Text = "Preview Mode (DOES NOT CHANGE ANYTHING)";
+            this.chkPreview.Text = "Preview Mode (Read Only Mode)";
             this.chkPreview.UseVisualStyleBackColor = true;
             // 
             // chkRecusrive
@@ -175,7 +183,7 @@
             this.chkRecusrive.AutoSize = true;
             this.chkRecusrive.Checked = true;
             this.chkRecusrive.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkRecusrive.Location = new System.Drawing.Point(31, 136);
+            this.chkRecusrive.Location = new System.Drawing.Point(31, 171);
             this.chkRecusrive.Name = "chkRecusrive";
             this.chkRecusrive.Size = new System.Drawing.Size(119, 17);
             this.chkRecusrive.TabIndex = 10;
@@ -197,7 +205,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFileNamePattern.Location = new System.Drawing.Point(123, 49);
             this.txtFileNamePattern.Name = "txtFileNamePattern";
-            this.txtFileNamePattern.Size = new System.Drawing.Size(197, 20);
+            this.txtFileNamePattern.Size = new System.Drawing.Size(215, 20);
             this.txtFileNamePattern.TabIndex = 8;
             this.txtFileNamePattern.Text = "*";
             // 
@@ -206,7 +214,7 @@
             this.chkUseFileDateIfNoEXIF.AutoSize = true;
             this.chkUseFileDateIfNoEXIF.Checked = true;
             this.chkUseFileDateIfNoEXIF.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkUseFileDateIfNoEXIF.Location = new System.Drawing.Point(31, 182);
+            this.chkUseFileDateIfNoEXIF.Location = new System.Drawing.Point(195, 203);
             this.chkUseFileDateIfNoEXIF.Name = "chkUseFileDateIfNoEXIF";
             this.chkUseFileDateIfNoEXIF.Size = new System.Drawing.Size(158, 17);
             this.chkUseFileDateIfNoEXIF.TabIndex = 7;
@@ -233,14 +241,57 @@
             this.lbStatus.Size = new System.Drawing.Size(405, 317);
             this.lbStatus.TabIndex = 0;
             // 
+            // chkSkipTopLevel
+            // 
+            this.chkSkipTopLevel.AutoSize = true;
+            this.chkSkipTopLevel.Checked = true;
+            this.chkSkipTopLevel.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkSkipTopLevel.Location = new System.Drawing.Point(195, 171);
+            this.chkSkipTopLevel.Name = "chkSkipTopLevel";
+            this.chkSkipTopLevel.Size = new System.Drawing.Size(193, 17);
+            this.chkSkipTopLevel.TabIndex = 12;
+            this.chkSkipTopLevel.Text = "Skip top level folder (\"My Pictures\")";
+            this.chkSkipTopLevel.UseVisualStyleBackColor = true;
+            // 
+            // chkSkipNumeric
+            // 
+            this.chkSkipNumeric.AutoSize = true;
+            this.chkSkipNumeric.Checked = true;
+            this.chkSkipNumeric.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkSkipNumeric.Location = new System.Drawing.Point(30, 236);
+            this.chkSkipNumeric.Name = "chkSkipNumeric";
+            this.chkSkipNumeric.Size = new System.Drawing.Size(162, 17);
+            this.chkSkipNumeric.TabIndex = 13;
+            this.chkSkipNumeric.Text = "Skip Numeric Folders (Years)";
+            this.chkSkipNumeric.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(28, 126);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(65, 13);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "Skip Folders";
+            // 
+            // txtSkipFolders
+            // 
+            this.txtSkipFolders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSkipFolders.Location = new System.Drawing.Point(123, 123);
+            this.txtSkipFolders.Name = "txtSkipFolders";
+            this.txtSkipFolders.Size = new System.Drawing.Size(215, 20);
+            this.txtSkipFolders.TabIndex = 14;
+            this.txtSkipFolders.Text = "Photo Stream,Picasa";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(419, 349);
+            this.ClientSize = new System.Drawing.Size(437, 388);
             this.Controls.Add(this.tabControl1);
             this.Name = "Main";
-            this.Text = "Renamer";
+            this.Text = "Photo Folder Renamer";
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
@@ -268,6 +319,10 @@
         private System.Windows.Forms.TextBox txtFileNamePattern;
         private System.Windows.Forms.CheckBox chkRecusrive;
         private System.Windows.Forms.CheckBox chkPreview;
+        private System.Windows.Forms.CheckBox chkSkipTopLevel;
+        private System.Windows.Forms.CheckBox chkSkipNumeric;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox txtSkipFolders;
     }
 }
 
