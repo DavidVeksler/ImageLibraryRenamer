@@ -63,12 +63,12 @@ namespace ImageLibraryRenamer
 
             if (!options.TestMode)
             {
-                Logger.Log(renamer.RenameQueue + " folder renames in Queue.  Renaming now..");
+                Logger.Log(renamer.RenameQueue.Count + " folder renames in Queue.  Renaming now..");
                 renamer.RenameFolders();    
             }
             else
             {
-                Logger.Log(renamer.RenameQueue + " folder renames in Queue.  Skipping rename because preview/test is checked.");
+                Logger.Log(renamer.RenameQueue.Count + " folder renames in Queue.  Skipping rename because preview/test is checked.");
             }
             
 
