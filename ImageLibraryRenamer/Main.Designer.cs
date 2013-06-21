@@ -124,7 +124,7 @@
             this.txtDatePattern.Name = "txtDatePattern";
             this.txtDatePattern.Size = new System.Drawing.Size(197, 20);
             this.txtDatePattern.TabIndex = 5;
-            this.txtDatePattern.Text = "yyyy-mm-dd-[folder]";
+            this.txtDatePattern.Text = "yyyy-MM-dd-[folder]";
             // 
             // tabControl1
             // 

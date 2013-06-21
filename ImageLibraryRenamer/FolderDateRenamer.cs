@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using ImageLibraryRenamer.ExifExtractor;
 
 namespace ImageLibraryRenamer
@@ -91,65 +90,76 @@ namespace ImageLibraryRenamer
 
             if (directoryInfo.Name.StartsWith("."))
             {
-                options.Logger.Log("Skipping " + options.Directory);
+                options.Logger.Log("Skipping: hidden folder: " + options.Directory);
                 return;
             }
-            
-            
-                options.Logger.Log("Checking " + options.Directory + " ");
-            
 
-            
+
+            options.Logger.Log("Checking " + options.Directory + " ");
+
 
             var files = directoryInfo.GetFiles(options.SearchPattern, searchOption).ToList();
 
             DateTime? exifDate = null;
             DateTime? fileCreateDate = null;
 
-            files.ForEach(file =>
+            foreach (var file in files)
+            {
+                options.Logger.LogAppendToLast(".");
+
+                if (options.UseExifDataToGetDate)
                 {
-                    if (exifDate != null) return;
+                    exifDate = ImageViewer.GetTakenTime(file.FullName);
 
-                    options.Logger.LogAppendToLast(".");
-
-                    if (options.UseExifDataToGetDate)
+                    if (exifDate != null)
                     {
-                        exifDate = ImageViewer.GetTakenTime(file.FullName);
-
-                        if (exifDate != null)
-                        {
-                            options.Logger.Log("Found EXIF date: " + exifDate);
-                        }
+                        options.Logger.Log("Found EXIF date: " + exifDate);
+                        break;
                     }
+                }
 
-                    if (exifDate == null && options.UseFileDateIfNoExif)
-                    {
-                        DateTime created = file.CreationTime;
-                        DateTime modified = file.LastWriteTime;
+                if (options.UseFileDateIfNoExif)
+                {
+                    DateTime created = file.CreationTime;
+                    DateTime modified = file.LastWriteTime;
 
-                        fileCreateDate = created > modified ? modified : created;
-                    }
-                });
+                    fileCreateDate = created > modified ? modified : created;
+                }
+            }
 
-            if (exifDate == null && fileCreateDate == null) return;
+            if (exifDate == null && fileCreateDate == null)
+            {
+                options.Logger.Log("[SKIPPING] No date found and using file date not checked.");   
+                return;
+            }
 
 
             DateTime folderDate = exifDate != null ? exifDate.Value : fileCreateDate.Value;
 
             string pattern = options.DatePattern.Replace("[folder]", "[]");
 
-            string newPath =
-                directoryInfo.FullName.Replace(directoryInfo.Name, folderDate.ToString(pattern))
-                             .Replace("[]", directoryInfo.Name);
+
+            string dateString = folderDate.ToString(pattern);
+
+            if (dateString.Contains(directoryInfo.Name))
+            {
+                options.Logger.Log("[SKIPPING] folder name already contains the same date");
+                return;
+            }
+            
+            string newPath = directoryInfo.FullName.Replace(directoryInfo.Name, dateString).Replace("[]", directoryInfo.Name);
+
+            
 
             if (!options.TestMode)
             {
-                options.Logger.Log(string.Format("Rename {0} to {1}", directoryInfo.FullName, newPath));
+                options.Logger.Log(string.Format("[RENAME] {0} ==> {1}", directoryInfo.FullName, newPath));
+
                 directoryInfo.MoveTo(newPath);
             }
             else
             {
-                options.Logger.Log(string.Format("[TEST MODE] Rename {0} to {1}", directoryInfo.FullName, newPath));
+                options.Logger.Log(string.Format("[PREVIEW] {0} ==> {1}", directoryInfo.FullName, newPath));
             }
 
             var directories = directoryInfo.GetDirectories().ToList();
@@ -158,7 +168,6 @@ namespace ImageLibraryRenamer
                 {
                     options.Directory = d.FullName;
                     RenameFolders(options);
-                    
                 });
         }
     }
