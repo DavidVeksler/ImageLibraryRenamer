@@ -5,6 +5,6 @@ Rename your image folders with the data based on EXIF data and/or the image crea
 
 Useful when migrating to Lightroom's workflow from Picasa.
 
-  ![Options](/DavidVeksler/ImageLibraryRenamer/blob/master/Screenshots/Options.png)
+  ![Options](https://raw.github.com/DavidVeksler/ImageLibraryRenamer/master/Screenshots/Options.png)
   
-  ![Log](/DavidVeksler/ImageLibraryRenamer/blob/master/Screenshots/Log.png)
+  ![Log](https://raw.github.com/DavidVeksler/ImageLibraryRenamer/master/Screenshots/Log.png)
