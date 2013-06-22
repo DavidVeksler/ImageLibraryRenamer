@@ -123,7 +123,11 @@
   <data name="label5.Text" xml:space="preserve">
     <value>Convert Picasa ini dates to file/directory dates.
 
-This is mainly useful if you are importing images from sources other than a digital camera (film or scans).
+This is mainly useful:
+
+*If you are importing images from sources other than a digital camera (film or scans).
+*If you run image optimization apps (JPEGmini, etc)  on your existing library so that it changes the original dates.
+
 
 The log for this process is not very informative, but it should work.
 </value>
