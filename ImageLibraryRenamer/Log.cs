@@ -38,5 +38,9 @@ namespace ImageLibraryRenamer
 
         #endregion
 
+        public void Clear()
+        {
+            _status.Items.Clear();
+        }
     }
 }

@@ -1,46 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using ImageLibraryRenamer.ExifExtractor;
 
 namespace ImageLibraryRenamer
 {
     public class FolderDateRenamer
     {
+        #region Params
+
         public struct RenameFoldersParams
         {
-            private string _directory;
             private readonly string _searchPattern;
             private readonly string _datePattern;
             private readonly bool _useExifDataToGetDate;
             private readonly bool _useFileDateIfNoExif;
             private readonly bool _recursive;
             private readonly bool _testMode;
-            private readonly ActivityLogger _logger;
 
-            public RenameFoldersParams(string directory, string searchPattern, string datePattern,
+            public RenameFoldersParams(string searchPattern, string datePattern,
                                        bool useExifDataToGetDate, bool useFileDateIfNoExif, bool Recursive,
-                                       bool TestMode, ActivityLogger logger)
+                                       bool TestMode)
                 : this()
             {
-                _directory = directory;
                 _searchPattern = searchPattern;
                 _datePattern = datePattern;
                 _useExifDataToGetDate = useExifDataToGetDate;
                 _useFileDateIfNoExif = useFileDateIfNoExif;
                 _recursive = Recursive;
                 _testMode = TestMode;
-                _logger = logger;
                 SkipTopLevel = true;
                 SkipNumeric = false;
                 SkipFolders = null;
-            }
-
-            public string Directory
-            {
-                get { return _directory; }
-                set { _directory = value; }
+                Logger = null;
             }
 
             public string SearchPattern
@@ -73,17 +66,20 @@ namespace ImageLibraryRenamer
                 get { return _testMode; }
             }
 
-            public ActivityLogger Logger
-            {
-                get { return _logger; }
-            }
+            public ActivityLogger Logger { get; set; }
 
             public bool SkipTopLevel { get; set; }
 
             public bool SkipNumeric { get; set; }
 
             public string SkipFolders { get; set; }
+
+            public bool SkipIfFolderHasXmpFile { get; set; }
+
+            public bool SkipIfFolderNameAlreadyHasDate { get; set; }
         }
+
+        #endregion Params
 
         public Dictionary<string, string> RenameQueue = new Dictionary<string, string>();
         private RenameFoldersParams options;
@@ -93,121 +89,165 @@ namespace ImageLibraryRenamer
             this.options = options;
         }
 
-        public void ParseData()
+        public void ParseImageDates(string directoryName)
         {
-            if (string.IsNullOrWhiteSpace(options.Directory) || !Directory.Exists(options.Directory))
+            if (string.IsNullOrWhiteSpace(directoryName) || !Directory.Exists(directoryName))
             {
-                options.Logger.FatalLog("Directory does not exist");
+                options.Logger.FatalLog(status: directoryName + " directory does not exist");
                 return;
             }
 
-            SearchOption searchOption = SearchOption.TopDirectoryOnly;
-
-            if (options.Recursive) searchOption = SearchOption.AllDirectories;
-
-            var directoryInfo = new DirectoryInfo(options.Directory);
+            var directoryInfo = new DirectoryInfo(directoryName);
 
             if (directoryInfo.Name.StartsWith("."))
             {
-                options.Logger.Log("Skipping: hidden folder: " + options.Directory);
+                options.Logger.Log(string.Format("(Skipping hidden folder {0})", directoryName));
                 return;
             }
 
+            options.Logger.Log("Checking " + directoryName + " ");
 
-            options.Logger.Log("Checking " + options.Directory + " ");
+            var files = directoryInfo.GetFiles(options.SearchPattern).ToList();
 
             if (options.SkipTopLevel)
             {
                 options.SkipTopLevel = false;
                 options.Logger.Log("Skipping top level: " + directoryInfo.Name);
+
+                ParseSubDirectories(directoryInfo);
+                return;
             }
-            else if (options.SkipNumeric && IsNumber(directoryInfo.Name))
+
+            if (options.SkipNumeric && IsNumber(directoryInfo.Name))
             {
                 options.Logger.Log("Skipping numeric: " + directoryInfo.Name);
+
+                ParseSubDirectories(directoryInfo);
+                return;
             }
-            else if (options.SkipFolders.Contains(directoryInfo.Name))
+
+            if (options.SkipFolders.Contains(directoryInfo.Name))
             {
                 options.Logger.Log("Skipping: " + directoryInfo.Name);
+                return;
             }
-            else
+
+            if (options.SkipIfFolderHasXmpFile && files.Any(f => f.Extension == ".xmp"))
             {
-                var files = directoryInfo.GetFiles(options.SearchPattern, searchOption).ToList();
-
-                DateTime? exifDate = null;
-                DateTime? fileCreateDate = null;
-
-                foreach (var file in files)
-                {
-                    options.Logger.LogAppendToLast(".");
-
-                    if (options.UseExifDataToGetDate)
-                    {
-                        exifDate = ImageViewer.GetTakenTime(file.FullName);
-
-                        if (exifDate != null)
-                        {
-                            options.Logger.Log("Found EXIF date: " + exifDate);
-                            break;
-                        }
-                    }
-
-                    if (options.UseFileDateIfNoExif)
-                    {
-                        if (fileCreateDate == null || file.CreationTime < fileCreateDate)
-                        {
-                            fileCreateDate = file.CreationTime;
-                        }
-
-                        if (fileCreateDate == null || file.LastWriteTime < fileCreateDate)
-                        {
-                            fileCreateDate = file.LastWriteTime;
-                        }
-
-
-                    }
-                }
-
-                if (exifDate == null && fileCreateDate == null)
-                {
-                    options.Logger.Log("[SKIPPING] No dates found.");
-                    return;
-                }
-
-
-                DateTime folderDate = exifDate != null ? exifDate.Value : fileCreateDate.Value;
-
-                string pattern = options.DatePattern.Replace("[folder]", "[]");
-
-
-                string dateString = folderDate.ToString(pattern);
-
-                if (dateString.Contains(directoryInfo.Name))
-                {
-                    options.Logger.Log("[SKIPPING] folder name already contains the same date");
-                    return;
-                }
-
-                string newPath = directoryInfo.FullName.Replace(directoryInfo.Name, dateString).Replace("[]", directoryInfo.Name);
-
-
-                options.Logger.Log(string.Format("[RENAME] {0} ==> {1}", directoryInfo.FullName, newPath));
-
-
-                RenameQueue.Add(directoryInfo.FullName, newPath);
-
-
+                options.Logger.Log("Skipping: " + directoryInfo.Name);
+                
+                ParseSubDirectories(directoryInfo);
+                return;
             }
 
+            DateTime? exifDate = null;
+            DateTime? fileCreateDate = null;
+
+            foreach (var file in files)
+            {
+                options.Logger.LogAppendToLast(".");
+
+                if (options.UseExifDataToGetDate)
+                {
+                    exifDate = ImageViewer.GetTakenTime(file.FullName);
+
+                    if (exifDate != null && exifDate.Value.Year > 1994) // exif invented in 1995
+                    {
+                        options.Logger.Log("Found EXIF date: " + exifDate);
+                        break;
+                    }
+                }
+
+                if (!options.UseFileDateIfNoExif) continue;
+
+                if (fileCreateDate == null || file.CreationTime < fileCreateDate)
+                {
+                    fileCreateDate = file.CreationTime;
+                }
+
+                if (fileCreateDate == null || file.LastWriteTime < fileCreateDate)
+                {
+                    fileCreateDate = file.LastWriteTime;
+                }
+
+                if (fileCreateDate == null || file.LastAccessTime < fileCreateDate)
+                {
+                    fileCreateDate = file.LastAccessTime;
+                }
+            }
+
+            if (exifDate == null && fileCreateDate == null)
+            {
+                options.Logger.Log("[SKIPPING] No dates found.");
+                return;
+            }
+
+
+            DateTime folderDate = exifDate != null ? exifDate.Value : fileCreateDate.Value;
+
+            string pattern = options.DatePattern.Replace("[folder]", "[]");
+
+
+            string dateString = folderDate.ToString(pattern);
+
+            if (dateString.Contains(directoryInfo.Name))
+            {
+                options.Logger.Log("[SKIPPING] folder name already contains the same date");
+                return;
+            }
+
+            if (dateString.Contains(directoryInfo.Name.Split(' ').First()))
+            {
+                options.Logger.Log("[SKIPPING] folder name already contains the same date");
+                return;
+            }
+
+            try
+            {
+                DateTime existingFolderDate;
+                if (DateTime.TryParse(directoryInfo.Name.Split(' ').First(), out existingFolderDate))
+                {
+                    if (options.SkipIfFolderNameAlreadyHasDate)
+                    {
+                        options.Logger.Log(string.Format("[SKIPPING] {0} already contains a date {1}", directoryInfo.Name, existingFolderDate));
+                        return;
+                    }
+
+                    if (existingFolderDate.Year == folderDate.Year && existingFolderDate.Month == folderDate.Month)
+                    {
+                        options.Logger.Log("[SKIPPING] folder name already contains the same month");
+                        return;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+            string newPath = directoryInfo.FullName.Replace(directoryInfo.Name, dateString)
+                                          .Replace("[]", directoryInfo.Name);
+
+
+            options.Logger.Log(string.Format("[RENAME] {0} >> {1}", directoryInfo.Name, newPath));
+
+            RenameQueue.Add(directoryInfo.FullName, newPath);
+
+            ParseSubDirectories(directoryInfo);
+        }
+
+        private void ParseSubDirectories(DirectoryInfo directoryInfo)
+        {
             var directories = directoryInfo.GetDirectories().ToList();
 
             if (options.Recursive)
             {
                 directories.ForEach(d =>
                     {
-                        options.Directory = d.FullName;
-                        ParseData();
+                        string directoryName = d.FullName;
+                        ParseImageDates(directoryName);
                     });
             }
+
         }
 
         public bool IsNumber(String value)
@@ -221,11 +261,12 @@ namespace ImageLibraryRenamer
                 {
                     try
                     {
-                        System.IO.Directory.Move(pair.Key, pair.Value);
+                        Debug.WriteLine(pair.Key + " >> " + pair.Value);
+                        Directory.Move(pair.Key, pair.Value);
                     }
                     catch (Exception ex)
                     {
-                        this.options.Logger.FatalLog(ex.ToString());
+                        options.Logger.FatalLog(ex.ToString());
                     }
                 });
         }

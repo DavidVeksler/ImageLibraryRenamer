@@ -120,4 +120,12 @@
   <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="label5.Text" xml:space="preserve">
+    <value>Convert Picasa ini dates to file/directory dates.
+
+This is mainly useful if you are importing images from sources other than a digital camera (film or scans).
+
+The log for this process is not very informative, but it should work.
+</value>
+  </data>
 </root>

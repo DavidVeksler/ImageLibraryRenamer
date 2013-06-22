@@ -46,9 +46,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExifExtractor\EXIFextractor.cs" />
-    <Compile Include="ExifExtractor\ImageViewer.cs" />
+    <Compile Include="EmbdedPicasaProperties.cs" />
+    <Compile Include="ExifExtractor\ExifReader.cs" />
+    <Compile Include="ExifExtractor\ExifTags.cs" />
     <Compile Include="FolderDateRenamer.cs" />
+    <Compile Include="ExifExtractor\ImageViewer.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>

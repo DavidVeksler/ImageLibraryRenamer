@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Main));
             this.btnGo = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.btnPickFolder = new System.Windows.Forms.Button();
@@ -38,6 +39,10 @@
             this.txtDatePattern = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.label4 = new System.Windows.Forms.Label();
+            this.txtSkipFolders = new System.Windows.Forms.TextBox();
+            this.chkSkipNumeric = new System.Windows.Forms.CheckBox();
+            this.chkSkipTopLevel = new System.Windows.Forms.CheckBox();
             this.chkPreview = new System.Windows.Forms.CheckBox();
             this.chkRecusrive = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -45,22 +50,24 @@
             this.chkUseFileDateIfNoEXIF = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.lbStatus = new System.Windows.Forms.ListBox();
-            this.chkSkipTopLevel = new System.Windows.Forms.CheckBox();
-            this.chkSkipNumeric = new System.Windows.Forms.CheckBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.txtSkipFolders = new System.Windows.Forms.TextBox();
+            this.chkSkipIfXmp = new System.Windows.Forms.CheckBox();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.btnEmbedPicasaProperties = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
+            this.chkSkipIfFolderNameAlreadyHasDate = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnGo
             // 
             this.btnGo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGo.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnGo.Location = new System.Drawing.Point(188, 305);
+            this.btnGo.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnGo.Location = new System.Drawing.Point(225, 289);
             this.btnGo.Name = "btnGo";
-            this.btnGo.Size = new System.Drawing.Size(222, 49);
+            this.btnGo.Size = new System.Drawing.Size(185, 65);
             this.btnGo.TabIndex = 0;
             this.btnGo.Text = "Rename my folders!";
             this.btnGo.UseVisualStyleBackColor = true;
@@ -128,12 +135,13 @@
             this.txtDatePattern.Name = "txtDatePattern";
             this.txtDatePattern.Size = new System.Drawing.Size(215, 20);
             this.txtDatePattern.TabIndex = 5;
-            this.txtDatePattern.Text = "yyyy-MM-dd-[folder]";
+            this.txtDatePattern.Text = "yyyy-MM-dd [folder]";
             // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -143,6 +151,8 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.chkSkipIfFolderNameAlreadyHasDate);
+            this.tabPage1.Controls.Add(this.chkSkipIfXmp);
             this.tabPage1.Controls.Add(this.label4);
             this.tabPage1.Controls.Add(this.txtSkipFolders);
             this.tabPage1.Controls.Add(this.chkSkipNumeric);
@@ -167,15 +177,58 @@
             this.tabPage1.Text = "Properties";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(28, 126);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(65, 13);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "Skip Folders";
+            // 
+            // txtSkipFolders
+            // 
+            this.txtSkipFolders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSkipFolders.Location = new System.Drawing.Point(123, 123);
+            this.txtSkipFolders.Name = "txtSkipFolders";
+            this.txtSkipFolders.Size = new System.Drawing.Size(215, 20);
+            this.txtSkipFolders.TabIndex = 14;
+            this.txtSkipFolders.Text = "Photo Stream,Picasa";
+            // 
+            // chkSkipNumeric
+            // 
+            this.chkSkipNumeric.AutoSize = true;
+            this.chkSkipNumeric.Checked = true;
+            this.chkSkipNumeric.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkSkipNumeric.Location = new System.Drawing.Point(30, 236);
+            this.chkSkipNumeric.Name = "chkSkipNumeric";
+            this.chkSkipNumeric.Size = new System.Drawing.Size(162, 17);
+            this.chkSkipNumeric.TabIndex = 13;
+            this.chkSkipNumeric.Text = "Skip Numeric Folders (Years)";
+            this.chkSkipNumeric.UseVisualStyleBackColor = true;
+            // 
+            // chkSkipTopLevel
+            // 
+            this.chkSkipTopLevel.AutoSize = true;
+            this.chkSkipTopLevel.Checked = true;
+            this.chkSkipTopLevel.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkSkipTopLevel.Location = new System.Drawing.Point(195, 171);
+            this.chkSkipTopLevel.Name = "chkSkipTopLevel";
+            this.chkSkipTopLevel.Size = new System.Drawing.Size(193, 17);
+            this.chkSkipTopLevel.TabIndex = 12;
+            this.chkSkipTopLevel.Text = "Skip top level folder (\"My Pictures\")";
+            this.chkSkipTopLevel.UseVisualStyleBackColor = true;
+            // 
             // chkPreview
             // 
             this.chkPreview.AutoSize = true;
             this.chkPreview.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkPreview.Location = new System.Drawing.Point(30, 269);
+            this.chkPreview.Location = new System.Drawing.Point(27, 305);
             this.chkPreview.Name = "chkPreview";
-            this.chkPreview.Size = new System.Drawing.Size(212, 17);
+            this.chkPreview.Size = new System.Drawing.Size(192, 17);
             this.chkPreview.TabIndex = 11;
-            this.chkPreview.Text = "Preview Mode (Read Only Mode)";
+            this.chkPreview.Text = "Test Mode (Read Only Mode)";
             this.chkPreview.UseVisualStyleBackColor = true;
             // 
             // chkRecusrive
@@ -227,7 +280,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(411, 323);
+            this.tabPage2.Size = new System.Drawing.Size(429, 362);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Log";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -238,51 +291,66 @@
             this.lbStatus.FormattingEnabled = true;
             this.lbStatus.Location = new System.Drawing.Point(3, 3);
             this.lbStatus.Name = "lbStatus";
-            this.lbStatus.Size = new System.Drawing.Size(405, 317);
+            this.lbStatus.Size = new System.Drawing.Size(423, 356);
             this.lbStatus.TabIndex = 0;
             // 
-            // chkSkipTopLevel
+            // chkSkipIfXmp
             // 
-            this.chkSkipTopLevel.AutoSize = true;
-            this.chkSkipTopLevel.Checked = true;
-            this.chkSkipTopLevel.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSkipTopLevel.Location = new System.Drawing.Point(195, 171);
-            this.chkSkipTopLevel.Name = "chkSkipTopLevel";
-            this.chkSkipTopLevel.Size = new System.Drawing.Size(193, 17);
-            this.chkSkipTopLevel.TabIndex = 12;
-            this.chkSkipTopLevel.Text = "Skip top level folder (\"My Pictures\")";
-            this.chkSkipTopLevel.UseVisualStyleBackColor = true;
+            this.chkSkipIfXmp.AutoSize = true;
+            this.chkSkipIfXmp.Checked = true;
+            this.chkSkipIfXmp.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkSkipIfXmp.Location = new System.Drawing.Point(195, 236);
+            this.chkSkipIfXmp.Name = "chkSkipIfXmp";
+            this.chkSkipIfXmp.Size = new System.Drawing.Size(162, 17);
+            this.chkSkipIfXmp.TabIndex = 16;
+            this.chkSkipIfXmp.Text = "Skip if .xmp sidecar files fond";
+            this.chkSkipIfXmp.UseVisualStyleBackColor = true;
             // 
-            // chkSkipNumeric
+            // tabPage3
             // 
-            this.chkSkipNumeric.AutoSize = true;
-            this.chkSkipNumeric.Checked = true;
-            this.chkSkipNumeric.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkSkipNumeric.Location = new System.Drawing.Point(30, 236);
-            this.chkSkipNumeric.Name = "chkSkipNumeric";
-            this.chkSkipNumeric.Size = new System.Drawing.Size(162, 17);
-            this.chkSkipNumeric.TabIndex = 13;
-            this.chkSkipNumeric.Text = "Skip Numeric Folders (Years)";
-            this.chkSkipNumeric.UseVisualStyleBackColor = true;
+            this.tabPage3.Controls.Add(this.label5);
+            this.tabPage3.Controls.Add(this.btnEmbedPicasaProperties);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(429, 362);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Embed Picasa Dates";
+            this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // label4
+            // btnEmbedPicasaProperties
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(28, 126);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(65, 13);
-            this.label4.TabIndex = 15;
-            this.label4.Text = "Skip Folders";
+            this.btnEmbedPicasaProperties.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnEmbedPicasaProperties.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnEmbedPicasaProperties.Location = new System.Drawing.Point(201, 305);
+            this.btnEmbedPicasaProperties.Name = "btnEmbedPicasaProperties";
+            this.btnEmbedPicasaProperties.Size = new System.Drawing.Size(222, 49);
+            this.btnEmbedPicasaProperties.TabIndex = 1;
+            this.btnEmbedPicasaProperties.Text = "Embed Picasa Dates";
+            this.btnEmbedPicasaProperties.UseVisualStyleBackColor = true;
+            this.btnEmbedPicasaProperties.Click += new System.EventHandler(this.btnEmbedPicasaProperties_Click);
             // 
-            // txtSkipFolders
+            // label5
             // 
-            this.txtSkipFolders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSkipFolders.Location = new System.Drawing.Point(123, 123);
-            this.txtSkipFolders.Name = "txtSkipFolders";
-            this.txtSkipFolders.Size = new System.Drawing.Size(215, 20);
-            this.txtSkipFolders.TabIndex = 14;
-            this.txtSkipFolders.Text = "Photo Stream,Picasa";
+            this.label5.Location = new System.Drawing.Point(19, 23);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(392, 175);
+            this.label5.TabIndex = 4;
+            this.label5.Text = resources.GetString("label5.Text");
+            // 
+            // chkSkipIfFolderNameAlreadyHasDate
+            // 
+            this.chkSkipIfFolderNameAlreadyHasDate.AutoSize = true;
+            this.chkSkipIfFolderNameAlreadyHasDate.Checked = true;
+            this.chkSkipIfFolderNameAlreadyHasDate.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkSkipIfFolderNameAlreadyHasDate.Location = new System.Drawing.Point(27, 268);
+            this.chkSkipIfFolderNameAlreadyHasDate.Name = "chkSkipIfFolderNameAlreadyHasDate";
+            this.chkSkipIfFolderNameAlreadyHasDate.Size = new System.Drawing.Size(173, 17);
+            this.chkSkipIfFolderNameAlreadyHasDate.TabIndex = 17;
+            this.chkSkipIfFolderNameAlreadyHasDate.Text = "Skip If Name Already Has Date";
+            this.chkSkipIfFolderNameAlreadyHasDate.UseVisualStyleBackColor = true;
             // 
             // Main
             // 
@@ -296,6 +364,7 @@
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -323,6 +392,11 @@
         private System.Windows.Forms.CheckBox chkSkipNumeric;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox txtSkipFolders;
+        private System.Windows.Forms.CheckBox chkSkipIfXmp;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button btnEmbedPicasaProperties;
+        private System.Windows.Forms.CheckBox chkSkipIfFolderNameAlreadyHasDate;
     }
 }
 

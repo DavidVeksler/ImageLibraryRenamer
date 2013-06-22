@@ -1,39 +1,58 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using ImageLibraryRenamer.ExifExtractor.EXIF;
+using ExifLib;
 
-namespace ImageLibraryRenamer.ExifExtractor
+namespace ImageLibraryRenamer
 {
     public class ImageViewer
     {
-        public static DateTime? GetTakenTime(string imageFilePath)
+        public static DateTime? GetTakenTime(string fullName)
         {
+            ExifReader reader = null;
             try
             {
-                var bmp = new Bitmap(imageFilePath);
-                var exif = new EXIFextractor(ref bmp, "n");
+                reader = new ExifReader(fullName);
 
-                if (exif["Date Time"] != null)
+                DateTime datePictureTaken;
+
+                if (reader.GetTagValue(ExifTags.DateTimeOriginal, out datePictureTaken))
                 {
-                    var str = ((string)exif["Date Time"]).TrimEnd('\0');
-
-                    var parts = str.Split(' ');
-                    var date = parts[0].Split(':').Select(part => Convert.ToInt32(part)).ToArray();
-                    var time = parts[1].Split(':').Select(part => Convert.ToInt32(part)).ToArray();
-
-                    return new DateTime(date[0], date[1], date[2], time[0], time[1], time[2]);
+                    Debug.WriteLine(string.Format("The picture was taken on {0}", datePictureTaken));
+                    return datePictureTaken;
                 }
 
-                return null;
+                if (reader.GetTagValue(ExifTags.DateTimeDigitized, out datePictureTaken))
+                {
+                    Debug.WriteLine(string.Format("The picture was taken on {0}", datePictureTaken));
+                    return datePictureTaken;
+                }
 
+                if (reader.GetTagValue(ExifTags.DateTime, out datePictureTaken))
+                {
+                    Debug.WriteLine(string.Format("The picture was taken on {0}", datePictureTaken));
+                    return datePictureTaken;
+                }
+
+                if (reader.GetTagValue(ExifTags.GPSDateStamp, out datePictureTaken))
+                {
+                    Debug.WriteLine(string.Format("The picture was taken on {0}", datePictureTaken));
+                    return datePictureTaken;
+                }
+
+                Debug.WriteLine(string.Format("The picture was taken on {0}", datePictureTaken));
+                return datePictureTaken;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
-                return null;
+                // Something didn't work!
+                Debug.WriteLine(ex.ToString());
+                //                MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                if (reader != null)
+                    reader.Dispose();
             }
+
+            return null;
         }
     }
 }
