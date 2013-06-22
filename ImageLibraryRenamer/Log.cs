@@ -19,7 +19,7 @@ namespace ImageLibraryRenamer
 
         public void FatalLog(string status)
         {
-            MessageBox.Show(status, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          //  MessageBox.Show(status, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             Log(status);
             Application.DoEvents();
         }

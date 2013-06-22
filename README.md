@@ -26,3 +26,12 @@ This is mainly useful:
 
 
 The log for this process is not very informative, but it should work.
+
+==========
+
+Works on OS X Too:
+
+
+  ![Confirm](https://raw.github.com/DavidVeksler/ImageLibraryRenamer/master/Screenshots/MonoConfirm.png)
+  
+  ![Mono Options](https://raw.github.com/DavidVeksler/ImageLibraryRenamer/master/Screenshots/MonoOptions.png)
