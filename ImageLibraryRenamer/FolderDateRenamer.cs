@@ -219,6 +219,14 @@ namespace ImageLibraryRenamer
                         return;
                     }
                 }
+
+//				// TODO: REMOVE
+//				if (folderDate.Year > 2012 || folderDate.Year < 1000) 
+//				{
+//					options.Logger.Log("[SKIPPING] > 2010 || <2000");
+//					ParseSubDirectories(directoryInfo);
+//					return;
+//				}
             }
             catch (Exception)
             {
@@ -229,6 +237,8 @@ namespace ImageLibraryRenamer
 
 
             options.Logger.Log(string.Format("[RENAME] {0} >> {1}", directoryInfo.Name, newPath));
+
+
 
             RenameQueue.Add(directoryInfo.FullName, newPath);
 

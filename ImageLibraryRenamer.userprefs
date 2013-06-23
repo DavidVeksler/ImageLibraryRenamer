@@ -1,0 +1,15 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="ImageLibraryRenamer/FolderDateRenamer.cs">
+    <Files>
+      <File FileName="ImageLibraryRenamer/EmbdedPicasaProperties.cs" Line="1" Column="1" />
+      <File FileName="ImageLibraryRenamer/Log.cs" Line="1" Column="1" />
+      <File FileName="ImageLibraryRenamer/Main.cs" Line="1" Column="1" />
+      <File FileName="ImageLibraryRenamer/FolderDateRenamer.cs" Line="228" Column="10" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

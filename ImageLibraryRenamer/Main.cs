@@ -90,6 +90,7 @@ namespace ImageLibraryRenamer
 
 
             Logger.Log("Done.");
+			MessageBox.Show ("Done");
         }
 
 
@@ -99,8 +100,10 @@ namespace ImageLibraryRenamer
             tabControl1.SelectTab(1);
 
             Logger.Log("Starting picasa parser...");
-            var embdedder = new EmbdedPicasaProperties();
+            var embdedder = new EmbedPicasaProperties();
             embdedder.ParseFolder(txtPath.Text, Logger);
+
+			MessageBox.Show ("Done");
         }
 
         #endregion UI
