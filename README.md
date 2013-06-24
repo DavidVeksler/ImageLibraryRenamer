@@ -1,13 +1,17 @@
-Folder Renamer for Image Libraries
+Folder and File Organization  for Large Image Libraries:
 ==========
 
-Folder Renamer:
+*Useful when migrating from Picasa to a professional photo workflow (Lightroom, etc).
+*Safe to run on the same set of folders multiple times - will detect if folder has already been renamed.
 
-Rename your image folders based on the EXIF date and/or the file creation dates. 
+Tools (Run in this order before migrating your library to Lightroom):
+*Picasa Embeder: Read dates from .picasa.ini files and convert them to file create dates
+*Folder Renamer: Rename your image folders based on the oldest EXIF date and/or the file creation dates. 
+*Folder name parser: Read the date from the folder name and use them for the file create/modify date.
 
-Useful when migrating from Picasa to a professional photo workflow (Lightroom, etc).
 
-Safe to run on the same set of folders multiple times - will detect if folder has already been renamed.
+
+==========
 
   ![Options](https://raw.github.com/DavidVeksler/ImageLibraryRenamer/master/Screenshots/Options.png)
   
