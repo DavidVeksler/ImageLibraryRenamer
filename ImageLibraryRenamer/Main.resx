@@ -120,6 +120,11 @@
   <metadata name="openFileDialog1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="label8.Text" xml:space="preserve">
+    <value>Rename your image folders based on the EXIF date and/or the file creation dates. 
+Useful when migrating from Picasa to a professional photo workflow (Lightroom, etc).
+Safe to run on the same set of folders multiple times - will detect if folder has already been renamed.</value>
+  </data>
   <data name="label5.Text" xml:space="preserve">
     <value>Convert Picasa ini dates to file/directory dates.
 
@@ -131,5 +136,12 @@ This is mainly useful:
 
 The log for this process is not very informative, but it should work.
 </value>
+  </data>
+  <data name="label6.Text" xml:space="preserve">
+    <value>Read the dates in the names of folders and use them to set the create/modify date of the files within.
+
+Useful when you do not have valid EXIF date information in the files because they were taken by old digitial cameras or scanned.
+
+Then you can set the "capture date" in Lightroom, etc by using the file create date option.</value>
   </data>
 </root>

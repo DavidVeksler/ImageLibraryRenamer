@@ -19,10 +19,7 @@ namespace ImageLibraryRenamer
 
         protected ActivityLogger Logger { get; set; }
 
-        private void OnStatusUpdated(object sender, EventArgs args)
-        {
-            lbStatus.Items.Add(args.ToString());
-        }
+      
 
         #region UI
 
@@ -42,7 +39,7 @@ namespace ImageLibraryRenamer
 
             Logger.Log("Starting folder renamer...");
 
-            tabControl1.SelectTab(1);
+            tabControl.SelectTab(1);
 
             Application.DoEvents();
 
@@ -97,7 +94,7 @@ namespace ImageLibraryRenamer
         private void btnEmbedPicasaProperties_Click(object sender, EventArgs e)
         {
             Logger.Clear();
-            tabControl1.SelectTab(1);
+            tabControl.SelectTab(1);
 
             Logger.Log("Starting picasa parser...");
             var embdedder = new EmbedPicasaProperties();
@@ -106,7 +103,24 @@ namespace ImageLibraryRenamer
 			MessageBox.Show ("Done");
         }
 
+
+        private void btnParseFolderNames_Click(object sender, EventArgs e)
+        {
+            Logger.Clear();
+            tabControl.SelectTab(1);
+
+            Logger.Log("Starting folder name parser...");
+
+            var embeder = new GetFileDateFromFolderName();
+
+            embeder.ParseFolder(txtPath.Text, this.Logger, (int)numDateDifference.Value);
+
+            MessageBox.Show("Done");
+        }
+
         #endregion UI
+
+        
 
     }
 }
